@@ -2,11 +2,19 @@ import numpy as np
 import os
 import subprocess
 import torchaudio
+import torch
 from tempfile import NamedTemporaryFile
 
 def load_audio(path):
-    sound, _ = torchaudio.load(path, normalization=True)
-    sound = sound.numpy().T
+    ext = path.split('.')[-1]
+    
+    if ext=='pcm':
+        sound = np.memmap(path, dtype='h', mode='r')
+        sound = sound.astype('float32') / 32767
+    else:
+        sound, _ = torchaudio.load(path, normalization=True)
+        sound = sound.numpy()
+    sound = sound.T
     if len(sound.shape) > 1:
         if sound.shape[1] == 1:
             sound = sound.squeeze()
