@@ -136,8 +136,7 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
         with open(transcript_path, 'r', encoding='utf8') as transcript_file:
             transcript = constant.SOS_CHAR + transcript_file.read().replace('\n', '').lower() + constant.EOS_CHAR
 
-        transcript = list(
-            filter(None, [self.label2id.get(x) for x in list(transcript)]))
+        transcript = [self.label2id.get(x) for x in list(transcript) if x in label2id.keys() else label2id.get('<unk>')]
         return transcript
 
     def __len__(self):
